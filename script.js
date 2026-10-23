@@ -24,7 +24,7 @@ const foods = [
         name: "Chicken Fried Rice",
         price: 190,
         category: "Main Course",
-        image: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=700",
+        image: "https://images.unsplash.com/photo-1563379091339-03246963d96c?w=700",
         description: "Delicious fried rice with chicken."
     },
     {
