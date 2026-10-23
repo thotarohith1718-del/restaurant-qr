@@ -65,6 +65,45 @@ app.post("/place-order", (req, res) => {
 app.get("/orders", (req, res) => {
     res.json(orders);
 });
+// Update order status
+app.patch("/update-order-status/:id", (req, res) => {
+    const { status } = req.body;
+
+    const allowedStatuses = [
+        "Accepted",
+        "Preparing",
+        "Ready",
+        "Completed"
+    ];
+
+    if (!allowedStatuses.includes(status)) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid order status"
+        });
+    }
+
+    const order = orders.find(
+        order => String(order.id) === req.params.id
+    );
+
+    if (!order) {
+        return res.status(404).json({
+            success: false,
+            message: "Order not found"
+        });
+    }
+
+    order.status = status;
+
+    io.emit("orderUpdated", order);
+
+    res.json({
+        success: true,
+        message: "Order status updated successfully",
+        order
+    });
+});
 
 // Start server
 server.listen(PORT, "0.0.0.0", () => {
