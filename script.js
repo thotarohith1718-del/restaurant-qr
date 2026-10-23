@@ -54,7 +54,16 @@ const foods = [
         category: "Desserts",
         image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=700",
         description: "A sweet and creamy dessert."
-    }
+    },
+
+    {
+        name: "Dum Biryani",
+        price: 220,
+        category: "Biryani",
+        image: "https://images.unsplash.com/photo-1563379091339-03246963d96c?w=700",
+        description: "Delicious traditional Dum Biryani."
+    },
+
 ];
 
 let cart = [];
