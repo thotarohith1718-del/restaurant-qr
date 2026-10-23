@@ -1,65 +1,231 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Restaurant Admin Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f5f7;
-            padding: 20px;
-            margin: 0;
+        * {
+            box-sizing: border-box;
         }
-        h1 { color: #222; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #101827, #1e293b, #312e81);
+            color: white;
+            min-height: 100vh;
+            padding: 25px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .online {
+            background: #14532d;
+            color: #86efac;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.09);
+            padding: 22px;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 16px;
+        }
+
+        .stat-card p {
+            color: #cbd5e1;
+            margin: 0 0 12px;
+        }
+
+        .stat-card h2 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .section-title {
+            margin-bottom: 18px;
+        }
+
         .order {
             background: white;
-            padding: 18px;
-            margin: 15px 0;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px #ddd;
+            color: #1e293b;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
-        .total { color: #087b45; font-weight: bold; }
-        .status { color: #d17b00; font-weight: bold; }
+
+        .order h3 {
+            margin-top: 0;
+            color: #4338ca;
+        }
+
+        .order p {
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+
+        .status {
+            display: inline-block;
+            background: #fef3c7;
+            color: #92400e;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .empty {
+            background: rgba(255,255,255,0.08);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            color: #cbd5e1;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 16px;
+            }
+
+            .header h1 {
+                font-size: 23px;
+            }
+        }
     </style>
 </head>
+
 <body>
-<h1>Restaurant Order Dashboard</h1>
-<div id="orders">Loading orders...</div>
+
+<div class="header">
+    <h1>🍽️ Restaurant Dashboard</h1>
+    <span class="online">● System Online</span>
+</div>
+
+<div class="stats">
+    <div class="stat-card">
+        <p>Total Orders</p>
+        <h2 id="totalOrders">0</h2>
+    </div>
+
+    <div class="stat-card">
+        <p>Pending Orders</p>
+        <h2 id="pendingOrders">0</h2>
+    </div>
+
+    <div class="stat-card">
+        <p>Today's Revenue</p>
+        <h2 id="revenue">₹0</h2>
+    </div>
+</div>
+
+<h2 class="section-title">📋 Recent Orders</h2>
+
+<div id="orders">
+    <div class="empty">Waiting for orders...</div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
 
 <script>
-    async function loadOrders() {
-        const response = await fetch("/orders");
-        const orders = await response.json();
+    const socket = io();
+
+    function displayOrder(order) {
         const container = document.getElementById("orders");
-        container.innerHTML = "";
 
-        if (orders.length === 0) {
-            container.textContent = "No orders yet.";
-            return;
-        }
+        const empty = container.querySelector(".empty");
+        if (empty) empty.remove();
 
-        orders.forEach(order => {
-            const card = document.createElement("div");
-            card.className = "order";
+        const card = document.createElement("div");
+        card.className = "order";
 
-            const items = order.items.map(item =>
-                `${item.name} - ₹${item.price}`
+        const heading = document.createElement("h3");
+        heading.textContent = "Order #" + order.id;
+
+        const table = document.createElement("p");
+        table.textContent = "Table: " + order.table;
+
+        const items = document.createElement("p");
+        items.textContent = "Items: " +
+            order.items.map(item =>
+                item.name + " - ₹" + item.price
             ).join(", ");
 
-            card.innerHTML = `
-          <h2>Order #${order.id}</h2>
-          <p>Table: ${order.table}</p>
-          <p>Items: ${items}</p>
-          <p class="total">Total: ₹${order.total}</p>
-          <p class="status">Status: ${order.status}</p>
-        `;
+        const total = document.createElement("h3");
+        total.textContent = "Total: ₹" + order.total;
 
-            container.appendChild(card);
-        });
+        const status = document.createElement("span");
+        status.className = "status";
+        status.textContent = "Status: " + order.status;
+
+        card.append(heading, table, items, total, status);
+        container.prepend(card);
+
+        updateStats();
     }
 
-    loadOrders();
-    setInterval(loadOrders, 5000);
+    function updateStats() {
+        const cards = document.querySelectorAll(".order");
+        document.getElementById("totalOrders").textContent = cards.length;
+
+        let pending = 0;
+        let revenue = 0;
+
+        cards.forEach(card => {
+            if (card.querySelector(".status").textContent.includes("Pending")) {
+                pending++;
+            }
+
+            const totalText = card.querySelector("h3:nth-of-type(2)");
+            if (totalText) {
+                revenue += Number(totalText.textContent.replace("Total: ₹", "")) || 0;
+            }
+        });
+
+        document.getElementById("pendingOrders").textContent = pending;
+        document.getElementById("revenue").textContent = "₹" + revenue;
+    }
+
+    fetch("/orders")
+        .then(response => response.json())
+        .then(orders => {
+            document.getElementById("orders").innerHTML = "";
+            if (orders.length === 0) {
+                document.getElementById("orders").innerHTML =
+                    '<div class="empty">No orders yet. New orders will appear here.</div>';
+            } else {
+                orders.forEach(displayOrder);
+            }
+        })
+        .catch(error => {
+            document.getElementById("orders").textContent =
+                "Unable to load orders. Please refresh.";
+        });
+
+    socket.on("newOrder", displayOrder);
 </script>
+
 </body>
 </html>
