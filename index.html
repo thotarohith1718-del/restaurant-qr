@@ -4,65 +4,119 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Restaurant QR Ordering</title>
+    <title>Teja Restaurant | Fine Dining</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="container">
+<header class="topbar">
+    <div class="brand">
+        <span class="brand-icon">T</span>
+        <span>TEJA <small>RESTAURANT</small></span>
+    </div>
 
-    <!-- Table Number -->
-    <h2 id="tableNumber">Table Number: Loading...</h2>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
+    <div class="table-badge" id="tableNumber">
+        Table Number: Loading...
+    </div>
+</header>
 
-            const params = new URLSearchParams(window.location.search);
+<main class="container">
 
-            const table = params.get("table");
-
-            document.getElementById("tableNumber").textContent =
-                table ? "Table Number: " + table : "Table Number: Not Assigned";
-
-        });
-    </script>
-
-    <!-- Restaurant Heading -->
-    <header>
-        <h1>🍽️ teja Restaurant</h1>
-        <p>Welcome! Choose your favourite food.</p>
-    </header>
-
-    <!-- Food Menu -->
-    <section class="menu-section">
-        <h2>Our Menu</h2>
-        <div id="menu"></div>
+    <section class="hero">
+        <p class="eyebrow">A TASTE OF EXCELLENCE</p>
+        <h1>Good food.<br><span>Beautiful moments.</span></h1>
+        <p class="hero-subtitle">
+            Discover flavours made with passion and served with love.
+        </p>
+        <div class="hero-decoration">✦ &nbsp; EST. WITH LOVE &nbsp; ✦</div>
     </section>
 
-    <!-- Shopping Cart -->
-    <section class="cart-section">
-        <h2>🛒 Your Cart</h2>
+    <section class="menu-section">
 
-        <div id="cart">
-            <p>Your cart is empty.</p>
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">OUR SELECTION</p>
+                <h2>Explore the Menu</h2>
+            </div>
+            <span class="menu-count">Freshly prepared</span>
         </div>
 
-        <h3>
-            Total Bill: ₹<span id="total">0</span>
-        </h3>
+        <div class="search-box">
+            <span>⌕</span>
+            <input type="search" id="foodSearch"
+                   placeholder="Search your favourite food...">
+        </div>
 
-        <button onclick="placeOrder()">
-            Place Order
-        </button>
+        <div id="categories" class="categories">
+            <button class="category active" data-category="All">All</button>
+            <button class="category" data-category="Biryani">Biryani</button>
+            <button class="category" data-category="Main Course">Main Course</button>
+            <button class="category" data-category="Starters">Starters</button>
+            <button class="category" data-category="Snacks">Snacks</button>
+            <button class="category" data-category="Desserts">Desserts</button>
+        </div>
+
+        <div id="menu" class="menu-grid"></div>
+
     </section>
 
-</div>
+    <section class="cart-section">
 
-<!-- Socket.IO Connection -->
+        <div class="cart-heading">
+            <div>
+                <p class="eyebrow">YOUR SELECTION</p>
+                <h2>Your Order</h2>
+            </div>
+            <span class="cart-count" id="cartCount">0 ITEMS</span>
+        </div>
+
+        <div id="cart">
+            <div class="empty-cart">
+                <span>♧</span>
+                <p>Your cart is waiting for something delicious.</p>
+            </div>
+        </div>
+
+        <div class="cart-total">
+            <span>Total Amount</span>
+            <strong>₹<span id="total">0</span></strong>
+        </div>
+
+        <button class="checkout-btn" onclick="placeOrder()">
+            Place Your Order <span>→</span>
+        </button>
+
+        <p class="secure-note">✦ &nbsp; Prepared fresh, just for you</p>
+
+    </section>
+
+</main>
+
+<footer>
+    <div class="brand footer-brand">
+        <span class="brand-icon">T</span>
+        <span>TEJA <small>RESTAURANT</small></span>
+    </div>
+    <p>Thank you for dining with us.</p>
+</footer>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const params = new URLSearchParams(window.location.search);
+        const table = params.get("table");
+
+        document.getElementById("tableNumber").textContent =
+            table ? "TABLE " + table : "TABLE NOT ASSIGNED";
+    });
+</script>
+
 <script src="/socket.io/socket.io.js"></script>
-
-<!-- Restaurant JavaScript -->
 <script src="script.js"></script>
 
 </body>
