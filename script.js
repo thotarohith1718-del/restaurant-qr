@@ -3,7 +3,7 @@ const foods = [
         name: "Chicken Biryani",
         price: 250,
         category: "Biryani",
-        image: "https://images.unsplash.com/photo-1563379091339-03246963d96c?w=700",
+        image: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=700",
         description: "Aromatic rice with delicious chicken."
     },
     {
