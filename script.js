@@ -222,6 +222,22 @@ async function placeOrder() {
             document.getElementById("successTable").textContent =
                 "TABLE " + table;
 
+            const details = document.getElementById("successOrderDetails");
+
+            details.innerHTML = cart.map(item => `
+    <div class="success-item">
+        <span>${item.name}</span>
+        <strong>₹${item.price}</strong>
+    </div>
+`).join("");
+
+            details.innerHTML += `
+    <div class="success-item success-total">
+        <span>Total Amount</span>
+        <strong>₹${order.total}</strong>
+    </div>
+`;
+
             document.getElementById("successModal").classList.add("show");
 
             cart = [];
