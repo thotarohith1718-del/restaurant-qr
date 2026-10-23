@@ -24,7 +24,7 @@ const foods = [
         name: "Chicken Fried Rice",
         price: 190,
         category: "Main Course",
-        image: "https://images.unsplash.com/photo-1563379091339-03246963d96c?w=700",
+        image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=700",
         description: "Delicious fried rice with chicken."
     },
     {
@@ -60,7 +60,7 @@ const foods = [
         name: "Dum Biryani",
         price: 220,
         category: "Biryani",
-        image: "https://images.unsplash.com/photo-1563379091339-03246963d96c?w=700",
+        image: "https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=700",
         description: "Delicious traditional Dum Biryani."
     },
 
