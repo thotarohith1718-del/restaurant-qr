@@ -66,6 +66,44 @@ app.get("/orders", (req, res) => {
     res.json(orders);
 });
 // Update order status
+app.put("/update-order/:id", (req, res) => {
+    const orderId = Number(req.params.id);
+    const { status } = req.body;
+
+    const allowedStatuses = [
+        "Accepted",
+        "Preparing",
+        "Ready",
+        "Completed"
+    ];
+
+    if (!allowedStatuses.includes(status)) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid order status"
+        });
+    }
+
+    const order = orders.find(o => o.id === orderId);
+
+    if (!order) {
+        return res.status(404).json({
+            success: false,
+            message: "Order not found"
+        });
+    }
+
+    order.status = status;
+
+    io.emit("orderUpdated", order);
+
+    res.json({
+        success: true,
+        message: "Order status updated",
+        order
+    });
+});
+// Update order status
 app.patch("/update-order-status/:id", (req, res) => {
     const { status } = req.body;
 
