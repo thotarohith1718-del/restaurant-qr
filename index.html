@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Restaurant QR Ordering</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Table Number -->
+    <h2 id="tableNumber">Table Number: Loading...</h2>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const params = new URLSearchParams(window.location.search);
+
+            const table = params.get("table");
+
+            document.getElementById("tableNumber").textContent =
+                table ? "Table Number: " + table : "Table Number: Not Assigned";
+
+        });
+    </script>
+
+    <!-- Restaurant Heading -->
+    <header>
+        <h1>🍽️ teja Restaurant</h1>
+        <p>Welcome! Choose your favourite food.</p>
+    </header>
+
+    <!-- Food Menu -->
+    <section class="menu-section">
+        <h2>Our Menu</h2>
+        <div id="menu"></div>
+    </section>
+
+    <!-- Shopping Cart -->
+    <section class="cart-section">
+        <h2>🛒 Your Cart</h2>
+
+        <div id="cart">
+            <p>Your cart is empty.</p>
+        </div>
+
+        <h3>
+            Total Bill: ₹<span id="total">0</span>
+        </h3>
+
+        <button onclick="placeOrder()">
+            Place Order
+        </button>
+    </section>
+
+</div>
+
+<!-- Socket.IO Connection -->
+<script src="/socket.io/socket.io.js"></script>
+
+<!-- Restaurant JavaScript -->
+<script src="script.js"></script>
+
+</body>
+</html>
