@@ -219,7 +219,11 @@ async function placeOrder() {
         const result = await response.json();
 
         if (result.success) {
-            alert("Order placed successfully!");
+            document.getElementById("successTable").textContent =
+                "TABLE " + table;
+
+            document.getElementById("successModal").classList.add("show");
+
             cart = [];
             showCart();
         } else {
@@ -229,6 +233,9 @@ async function placeOrder() {
         alert("Unable to place order. Please try again.");
         console.error(error);
     }
+}
+function closeSuccessModal() {
+    document.getElementById("successModal").classList.remove("show");
 }
 
 showMenu();

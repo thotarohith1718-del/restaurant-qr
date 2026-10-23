@@ -481,3 +481,97 @@ footer p {
     font-weight: 600;
     cursor: pointer;
 }
+
+.success-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(25, 27, 22, 0.75);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.success-modal.show {
+    display: flex;
+}
+
+.success-card {
+    width: 100%;
+    max-width: 400px;
+    background: #F8F6F0;
+    padding: 35px 25px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+    animation: successAppear 0.35s ease;
+}
+
+.success-icon {
+    width: 75px;
+    height: 75px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: #e6eddf;
+    color: #426b42;
+    font-size: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.success-label {
+    color: #a58b59;
+    letter-spacing: 3px;
+    font-size: 12px;
+}
+
+.success-card h2 {
+    color: #292820;
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    margin: 15px 0;
+}
+
+.success-message {
+    color: #77736a;
+    line-height: 1.7;
+}
+
+.success-table {
+    background: #eee8da;
+    padding: 13px;
+    margin: 20px 0;
+    border-radius: 8px;
+    font-weight: bold;
+    color: #292820;
+}
+
+.success-card button {
+    width: 100%;
+    padding: 15px;
+    background: #292820;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.success-footer {
+    color: #a58b59;
+    margin-top: 20px;
+    font-size: 13px;
+}
+
+@keyframes successAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -115,6 +115,24 @@
             table ? "TABLE " + table : "TABLE NOT ASSIGNED";
     });
 </script>
+<div id="successModal" class="success-modal">
+    <div class="success-card">
+        <div class="success-icon">✓</div>
+        <p class="success-label">TEJA RESTAURANT</p>
+        <h2>Order Confirmed!</h2>
+        <p class="success-message">
+            Thank you for your order. Your delicious food
+            is being prepared fresh.
+        </p>
+        <div class="success-table" id="successTable">
+            TABLE 1
+        </div>
+        <button onclick="closeSuccessModal()">
+            Continue Exploring
+        </button>
+        <p class="success-footer">We appreciate your visit ♥</p>
+    </div>
+</div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="script.js"></script>
