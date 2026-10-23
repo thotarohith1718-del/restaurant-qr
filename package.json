@@ -1,10 +1,10 @@
 {
   "name": "restaurant-qr",
   "version": "1.0.0",
-  "description": "",
-  "main": "script.js",
+  "description": "Restaurant QR ordering system",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
