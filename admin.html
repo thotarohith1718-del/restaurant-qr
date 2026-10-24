@@ -240,34 +240,40 @@
                 actions.appendChild(button);
             });
               // Remove completed order
-              app.delete("/remove-order/:id", (req, res) => {
-                  const index = orders.findIndex(
-                      order => String(order.id) === req.params.id
-                  );
+              if (order.status === "Completed") {
+                  const removeButton = document.createElement("button");
 
-                  if (index === -1) {
-                      return res.status(404).json({
-                          success: false,
-                          message: "Order not found"
-                      });
-                  }
+                  removeButton.textContent = "Remove Order";
+                  removeButton.className = "remove";
 
-                  if (orders[index].status !== "Completed") {
-                      return res.status(400).json({
-                          success: false,
-                          message: "Only completed orders can be removed"
-                      });
-                  }
+                  removeButton.addEventListener("click", async () => {
+                      if (!confirm("Has the customer completed payment?")) {
+                          return;
+                      }
 
-                  const removedOrder = orders.splice(index, 1)[0];
+                      try {
+                          const response = await fetch(
+                              `/remove-order/${order.id}`,
+                              { method: "DELETE" }
+                          );
 
-                  io.emit("orderRemoved", removedOrder.id);
+                          const result = await response.json();
 
-                  res.json({
-                      success: true,
-                      message: "Order removed successfully"
+                          if (!response.ok) {
+                              throw new Error(result.message);
+                          }
+
+                          card.remove();
+                          orderMap.delete(order.id);
+                          updateStats();
+
+                      } catch (error) {
+                          alert("Unable to remove order: " + error.message);
+                      }
                   });
-              });
+
+                  actions.appendChild(removeButton);
+              }
 
             card.append(heading, table, items, total, status, actions);
             orderContainer.prepend(card);
