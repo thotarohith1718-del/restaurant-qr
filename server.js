@@ -142,7 +142,35 @@ app.patch("/update-order-status/:id", (req, res) => {
         order
     });
 });
+// Remove completed order
+app.delete("/remove-order/:id", (req, res) => {
+    const index = orders.findIndex(
+        order => String(order.id) === req.params.id
+    );
 
+    if (index === -1) {
+        return res.status(404).json({
+            success: false,
+            message: "Order not found"
+        });
+    }
+
+    if (orders[index].status !== "Completed") {
+        return res.status(400).json({
+            success: false,
+            message: "Only completed orders can be removed"
+        });
+    }
+
+    const removedOrder = orders.splice(index, 1)[0];
+
+    io.emit("orderRemoved", removedOrder.id);
+
+    res.json({
+        success: true,
+        message: "Order removed successfully"
+    });
+});
 // Start server
 server.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on port ${PORT}`);

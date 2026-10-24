@@ -158,13 +158,15 @@
 
     function renderOrders() {
         orderContainer.innerHTML = "";
+        const activeOrders = [...orderMap.values()];
 
-        if (orderMap.size === 0) {
+        if (activeOrders.length === 0) {
             orderContainer.innerHTML =
                 '<div class="empty">No orders yet.</div>';
+            return;
         }
 
-        orderMap.forEach(order => {
+          activeOrders.forEach(orders =>{
             const card = document.createElement("div");
             card.className = "order";
 
@@ -237,6 +239,35 @@
 
                 actions.appendChild(button);
             });
+              // Remove completed order
+              app.delete("/remove-order/:id", (req, res) => {
+                  const index = orders.findIndex(
+                      order => String(order.id) === req.params.id
+                  );
+
+                  if (index === -1) {
+                      return res.status(404).json({
+                          success: false,
+                          message: "Order not found"
+                      });
+                  }
+
+                  if (orders[index].status !== "Completed") {
+                      return res.status(400).json({
+                          success: false,
+                          message: "Only completed orders can be removed"
+                      });
+                  }
+
+                  const removedOrder = orders.splice(index, 1)[0];
+
+                  io.emit("orderRemoved", removedOrder.id);
+
+                  res.json({
+                      success: true,
+                      message: "Order removed successfully"
+                  });
+              });
 
             card.append(heading, table, items, total, status, actions);
             orderContainer.prepend(card);
