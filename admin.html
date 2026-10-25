@@ -276,7 +276,30 @@
                   actions.appendChild(removeButton);
               }
 
-            card.append(heading, table, items, total, status, actions);
+              const orderDateTime = document.createElement("p");
+
+              const orderDate = new Date(order.time);
+
+              orderDateTime.textContent = "Date & Time: " +
+                  orderDate.toLocaleString("en-IN", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                      timeZone: "Asia/Kolkata"
+                  });
+
+              card.append(
+                  heading,
+                  table,
+                  items,
+                  total,
+                  status,
+                  orderDateTime,
+                  actions
+              );
             orderContainer.prepend(card);
         });
 
