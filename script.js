@@ -192,6 +192,26 @@ document.querySelectorAll(".category").forEach(button => {
         showMenu();
     });
 });
+const customerSocket = io();
+let currentOrderId = null;
+customerSocket.on("orderUpdated", (updatedOrder) => {
+    if (String(updatedOrder.id) !== String(currentOrderId)) {
+        return;
+    }
+
+    const statusElement =
+        document.getElementById("customerOrderStatus");
+
+    const messages = {
+        Accepted: "✅ Your order has been accepted!",
+        Preparing: "👨‍🍳 Your food is being prepared.",
+        Ready: "🟢 Your order is ready!",
+        Completed: "✅ Your order is completed."
+    };
+
+    statusElement.textContent =
+        messages[updatedOrder.status] || updatedOrder.status;
+});
 
 async function placeOrder() {
     if (cart.length === 0) {
@@ -219,6 +239,9 @@ async function placeOrder() {
         const result = await response.json();
 
         if (result.success) {
+            currentOrderId = result.order.id;
+            document.getElementById("customerOrderStatus").textContent =
+                "🟡 Pending — Waiting for restaurant confirmation";
             document.getElementById("successTable").textContent =
                 "TABLE " + table;
 

@@ -11,8 +11,7 @@ if (!fs.existsSync(folder)) {
 async function generateQR() {
 
     for (let i = 1; i <= 10; i++) {
-
-        const url = `http://10.46.27.147:3001/?table=${i}`;
+        const url = `https://restaurant-qr-se02.onrender.com/?table=${i}`;
 
         await QRCode.toFile(
             path.join(folder, `table-${i}.png`),
