@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -297,16 +298,24 @@
         document.getElementById("revenue").textContent = "₹" + revenue;
     }
 
-    fetch("/orders")
+    fetch("/orders", {
+        cache: "no-store"
+    })
         .then(response => response.json())
         .then(orders => orders.forEach(displayOrder))
-        .catch(() => {
-            orderContainer.textContent = "Unable to load orders. Please refresh.";
+        .catch((error) => {
+            console.error("Order loading error:", error);
+            orderContainer.textContent =
+                "Unable to load orders: " + error.message;
         });
 
     socket.on("newOrder", displayOrder);
     socket.on("orderUpdated", displayOrder);
 </script>
 
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+</script>
 </body>
 </html>
