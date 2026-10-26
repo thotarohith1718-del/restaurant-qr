@@ -194,6 +194,25 @@ document.querySelectorAll(".category").forEach(button => {
 });
 const customerSocket = io();
 let currentOrderId = null;
+let isExistingOrder = false;
+
+// Remember the active order for this table
+const urlParams = new URLSearchParams(window.location.search);
+const tableNumber = urlParams.get("table");
+
+if (tableNumber) {
+    const savedOrderId = localStorage.getItem(
+        `golcondas_order_table_${tableNumber}`
+    );
+
+    if (savedOrderId) {
+        currentOrderId = savedOrderId;
+        isExistingOrder = true;
+
+        document.getElementById("placeOrderBtn").style.display = "none";
+        document.getElementById("addMoreItemsBtn").style.display = "block";
+    }
+}
 customerSocket.on("orderUpdated", (updatedOrder) => {
     if (String(updatedOrder.id) !== String(currentOrderId)) {
         return;
@@ -240,6 +259,17 @@ async function placeOrder() {
 
         if (result.success) {
             currentOrderId = result.order.id;
+            // Save the existing order ID for this table
+            localStorage.setItem("currentOrderId", currentOrderId);
+
+            document.getElementById("addMoreItemsBtn").style.display = "block";
+
+
+            isExistingOrder = true;
+
+// Switch to Add More Items button
+            document.getElementById("placeOrderBtn").style.display = "none";
+            document.getElementById("addMoreItemsBtn").style.display = "block";
             document.getElementById("customerOrderStatus").textContent =
                 "🟡 Pending — Waiting for restaurant confirmation";
             document.getElementById("successTable").textContent =
@@ -275,6 +305,58 @@ async function placeOrder() {
 }
 function closeSuccessModal() {
     document.getElementById("successModal").classList.remove("show");
+}
+async function addItemsToExistingOrder() {
+
+    // Check whether an existing order ID is available
+    if (!currentOrderId) {
+        alert("No existing order found!");
+        return;
+    }
+
+    // Check whether the customer selected any food
+    if (cart.length === 0) {
+        alert("Please add food items first!");
+        return;
+    }
+
+    try {
+
+        // Send additional items to the existing order
+        const response = await fetch(
+            `/add-items/${currentOrderId}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    items: cart
+                })
+            }
+        );
+
+        const result = await response.json();
+
+        // Check server response
+        if (!response.ok) {
+            alert(result.message || "Unable to add items.");
+            return;
+        }
+
+        // Show success message
+        alert("Additional items added successfully!");
+
+        // Clear cart after successful submission
+        cart = [];
+        showCart();
+
+    } catch (error) {
+
+        console.error("Add items error:", error);
+        alert("Unable to add items. Please try again.");
+
+    }
 }
 
 showMenu();

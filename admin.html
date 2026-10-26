@@ -177,10 +177,26 @@
             const table = document.createElement("p");
             table.textContent = "Table: " + order.table;
 
-            const items = document.createElement("p");
-            items.textContent = "Items: " + order.items.map(item =>
-                item.name + " - ₹" + item.price
-            ).join(", ");
+              const items = document.createElement("div");
+
+              const originalItems = (order.items || []).filter(
+                  item => !item.addedAt
+              );
+
+              const extraItems = order.additionalItems || [];
+
+              items.innerHTML = "<strong>Original Items:</strong><br>" +
+                  originalItems.map(item =>
+                      item.name + " - ₹" + item.price
+                  ).join("<br>");
+
+              if (extraItems.length > 0) {
+                  items.innerHTML +=
+                      "<br><br><strong style='color:green;'>NEW - Extra Items Added:</strong><br>" +
+                      extraItems.map(item =>
+                          item.name + " - ₹" + item.price
+                      ).join("<br>");
+              }
 
             const total = document.createElement("h3");
             total.textContent = "Total: ₹" + order.total;

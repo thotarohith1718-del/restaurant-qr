@@ -88,10 +88,15 @@
             <strong>₹<span id="total">0</span></strong>
         </div>
 
-        <button class="checkout-btn" onclick="placeOrder()">
+        <button class="checkout-btn" id="placeOrderBtn" onclick="placeOrder()">
             Place Your Order <span>→</span>
         </button>
 
+        <button class="checkout-btn" id="addMoreItemsBtn"
+                onclick="addItemsToExistingOrder()"
+                style="display: none;">
+            Add to Existing Order <span>+</span>
+        </button>
         <p class="secure-note">✦ &nbsp; Prepared fresh, just for you</p>
 
     </section>

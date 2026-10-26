@@ -60,10 +60,133 @@ app.post("/place-order", (req, res) => {
         });
     }
 });
+// Add extra items to an existing order
+app.post("/add-items/:id", (req, res) => {
+    try {
+        const orderId = Number(req.params.id);
+        const { items } = req.body;
 
+        const order = orders.find(o => Number(o.id) === orderId);
+
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: "Order not found"
+            });
+        }
+
+        if (order.paymentStatus === "Paid") {
+            return res.status(400).json({
+                success: false,
+                message: "Payment completed. Cannot add more items."
+            });
+        }
+
+        if (!Array.isArray(items) || items.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Please add items first"
+            });
+        }
+
+        // Merge new items into the existing order
+        order.items.push(...items);
+
+        // Recalculate total
+        order.total = order.items.reduce(
+            (sum, item) => sum + Number(item.price),
+            0
+        );
+
+        order.updatedAt = new Date();
+
+        // Notify admin and customer
+        io.emit("orderUpdated", order);
+
+        res.json({
+            success: true,
+            message: "Items added successfully!",
+            order
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Server error"
+        });
+    }
+});
 // Get all orders
 app.get("/orders", (req, res) => {
     res.json(orders);
+});
+// Add extra items to an existing order
+app.post("/add-items/:id", (req, res) => {
+    try {
+        const order = orders.find(
+            o => String(o.id) === req.params.id
+        );
+
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: "Order not found"
+            });
+        }
+
+        const { items } = req.body;
+
+        if (!Array.isArray(items) || items.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Please add food items"
+            });
+        }
+
+        // Record the extra items separately
+        const addedAt = new Date();
+
+        const newItems = items.map(item => ({
+            ...item,
+            addedAt: addedAt
+        }));
+
+        if (!order.additionalItems) {
+            order.additionalItems = [];
+        }
+
+        order.additionalItems.push(...newItems);
+
+        // Add them to the original order
+        order.items.push(...newItems);
+
+        // Recalculate total
+        order.total = order.items.reduce(
+            (sum, item) => sum + Number(item.price || 0),
+            0
+        );
+
+        order.updatedAt = addedAt;
+
+        // Notify admin without changing order status
+        io.emit("orderUpdated", order);
+
+        res.json({
+            success: true,
+            message: "Extra items added successfully!",
+            order: order
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Server error"
+        });
+    }
 });
 // Update order status
 app.put("/update-order/:id", (req, res) => {
