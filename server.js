@@ -122,6 +122,24 @@ app.post("/add-items/:id", (req, res) => {
 app.get("/orders", (req, res) => {
     res.json(orders);
 });
+// Get one order by ID
+app.get("/orders/:id", (req, res) => {
+    const order = orders.find(
+        o => String(o.id) === String(req.params.id)
+    );
+
+    if (!order) {
+        return res.status(404).json({
+            success: false,
+            message: "Order not found"
+        });
+    }
+
+    res.json({
+        success: true,
+        order: order
+    });
+});
 // Add extra items to an existing order
 app.post("/add-items/:id", (req, res) => {
     try {

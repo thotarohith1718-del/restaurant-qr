@@ -358,6 +358,43 @@ async function addItemsToExistingOrder() {
 
     }
 }
+async function loadCurrentOrder() {
+    const savedOrderId = localStorage.getItem("currentOrderId");
+
+    if (!savedOrderId) return;
+
+    try {
+        const response = await fetch(`/orders/${savedOrderId}`);
+
+        if (!response.ok) return;
+
+        const order = await response.json();
+
+        if (!order.success) return;
+
+        const section = document.getElementById("myCurrentOrder");
+        const details = document.getElementById("currentOrderDetails");
+
+        section.style.display = "block";
+
+        details.innerHTML = `
+            <p>Order #${order.order.id}</p>
+            <p>Table: ${order.order.table}</p>
+
+            ${order.order.items.map(item => `
+                <p>${item.name} - ₹${item.price}</p>
+            `).join("")}
+
+            <h3>Total: ₹${order.order.total}</h3>
+            <p>Status: ${order.order.status}</p>
+            <p>Payment: ${order.order.paymentStatus || "Unpaid"}</p>
+        `;
+    } catch (error) {
+        console.error("Unable to load order:", error);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", loadCurrentOrder);
 
 showMenu();
 showCart();
